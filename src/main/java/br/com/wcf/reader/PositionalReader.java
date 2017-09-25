@@ -14,8 +14,8 @@ import br.com.wcf.exception.PositionalReaderException;
 
 public class PositionalReader {
 
-	public <E> E parse(Class<E> classType, String line, Map<String, List<String>> lists) throws Exception {
-		return this.reader(classType, line, null);
+	public <E> E parse(Class<E> classType, String line, Map<String, List<String>> data) throws Exception {
+		return this.reader(classType, line, data);
 	}
 
 	public <E> E parse(Class<E> classType, String line) throws Exception {
@@ -144,7 +144,7 @@ public class PositionalReader {
 	@SuppressWarnings("unchecked")
 	private <E> List<E> parseOuterList(Class<?> classType, FieldReader annotation, List<String> data) throws Exception {
 
-		if (!(data != null && data.isEmpty())) {
+		if (!(data != null && !data.isEmpty())) {
 			return null;
 		}
 
