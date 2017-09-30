@@ -1,6 +1,9 @@
 # POSITIONAL-READER
 Um projeto simples para conversão de arquivo posicional, utilizando Java 8.
 
+## LINKEDIN
+https://www.linkedin.com/in/wcfps/
+
 ## GET STARTED
 
 Primeiramente, a posição do atributo na classe Java indicará a posição do atributo no arquivo. Isso significa que, se no arquivo posicional, os primeiros 60 caracteres se referirem ao nome, o primeiro atributo com a anotação <b>@FieldReader</b> na classe Java deverá ser: nome.
