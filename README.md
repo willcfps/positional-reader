@@ -1,2 +1,7 @@
 # positional-reader
-Leitor de posicional
+Um projeto simples para conversão de arquivo posicional, utilizando Java 8.
+
+# GET STARTED
+
+
+
