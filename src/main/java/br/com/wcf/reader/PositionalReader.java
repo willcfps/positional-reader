@@ -12,9 +12,28 @@ import java.util.Map;
 import br.com.wcf.annotation.FieldReader;
 import br.com.wcf.exception.PositionalReaderException;
 
+/**
+ * Classe que realiza a conversão de uma linha posicional.
+ * 
+ * @author willcf
+ *
+ */
 public class PositionalReader {
 
-	public <E> E parse(Class<E> classType, String line, Map<String, List<String>> data) throws Exception {
+	/**
+	 * Converte uma linha posicional em objeto.
+	 * 
+	 * @param classType
+	 *            - Tipo de classe a ser convertida.
+	 * @param line
+	 *            - Linha do posicional.
+	 * @param data
+	 *            - Map com as outras linhas ou lista de linhas a serem
+	 *            convertidas para o classType informado.
+	 * @return
+	 * @throws Exception
+	 */
+	public <E> E parse(Class<E> classType, String line, Map<String, Object> data) throws Exception {
 		return this.reader(classType, line, data);
 	}
 
@@ -22,7 +41,7 @@ public class PositionalReader {
 		return this.reader(classType, line, null);
 	}
 
-	private <E> E reader(Class<E> classType, String line, Map<String, List<String>> data) throws Exception {
+	private <E> E reader(Class<E> classType, String line, Map<String, Object> data) throws Exception {
 		E object = classType.newInstance();
 		for (Field field : classType.getDeclaredFields()) {
 
@@ -32,17 +51,13 @@ public class PositionalReader {
 
 			FieldReader annotation = field.getAnnotation(FieldReader.class);
 			int length = annotation.length();
-			if (annotation.calculate()) {
-				length = this.calculate(field.getType());
-			}
-
-			if (field.getType().equals(List.class)
-					&& annotation.listLocation().equals(FieldReader.ListLocation.INNER)) {
-				length = this.calculate(annotation.listType()) * annotation.listSize();
+			if (annotation.dataLocation().equals(FieldReader.DataLocation.INNER)) {
+				length = this.calculate(field, annotation);
 			}
 
 			if (!(line.length() >= length)) {
-				throw new PositionalReaderException(String.format("Fim prematuro da linha. Field: %s", field.getName()));
+				throw new PositionalReaderException(String.format("Fim prematuro da linha. Class: %s Field: %s",
+						classType.getName(), field.getName()));
 			}
 			String aux = line.substring(0, length);
 			Object value = this.parseField(field.getType(), aux, annotation, data, field);
@@ -55,11 +70,11 @@ public class PositionalReader {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <E> E parseField(Class<E> type, String value, FieldReader annotation, Map<String, List<String>> data,
-			Field field) throws Exception {
+	private <E> E parseField(Class<E> type, String value, FieldReader annotation, Map<String, Object> data, Field field)
+			throws Exception {
 
 		if (type.equals(String.class)) {
-			return value.isEmpty() ? null : (E) value;
+			return value.isEmpty() ? null : (E) value.trim();
 		}
 
 		if (type.equals(Integer.class)) {
@@ -114,17 +129,29 @@ public class PositionalReader {
 		if (type.equals(List.class)) {
 			if (annotation.listType().equals(Object.class)) {
 				throw new PositionalReaderException(
-						String.format("Tipo de lista não informado para o atributo %s.", field.getName()));
+						String.format("Tipo de lista não definido para o atributo %s.", field.getName()));
 			}
 
-			if (annotation.listLocation().equals(FieldReader.ListLocation.INNER)) {
+			if (annotation.dataLocation().equals(FieldReader.DataLocation.INNER)) {
 				return (E) this.parseInnerList(annotation.listType(), annotation, value);
 			}
 
-			return (E) this.parseOuterList(annotation.listType(), annotation, data.get(annotation.listKey()));
+			if (data != null) {
+				return (E) this.parseOuterList(annotation.listType(), annotation,
+						(List<String>) data.get(annotation.dataKey()));
+			}
 		}
 
-		return this.reader(type, value, data);
+		if (annotation.dataLocation().equals(FieldReader.DataLocation.INNER)) {
+			return this.reader(type, value, data);
+		}
+
+		if (annotation.dataLocation().equals(FieldReader.DataLocation.OUTER)) {
+			return this.reader(type, (String) data.get(annotation.dataKey()), data);
+		}
+
+		throw new PositionalReaderException(
+				String.format("Tipo de dado não definido para o atributo %s.", field.getName()));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -157,6 +184,20 @@ public class PositionalReader {
 
 	}
 
+	private int calculate(Field field, FieldReader annotation) throws Exception {
+
+		if (field.getType().equals(List.class) && annotation.dataLocation().equals(FieldReader.DataLocation.INNER)) {
+			if (annotation.listSize() == 0) {
+				throw new PositionalReaderException(
+						String.format("Tamanho da lista não definido para o atributo %s.", field.getName()));
+			}
+
+			return this.calculate(annotation.listType()) * annotation.listSize();
+		}
+
+		return this.calculate(field.getType());
+	}
+
 	private int calculate(Class<?> classType) throws Exception {
 		try {
 			Field[] fields = classType.getDeclaredFields();
@@ -167,7 +208,7 @@ public class PositionalReader {
 				}
 
 				FieldReader annotation = field.getAnnotation(FieldReader.class);
-				if (annotation.calculate()) {
+				if (annotation.dataLocation().equals(FieldReader.DataLocation.INNER)) {
 					length += this.calculate(field.getClass());
 					continue;
 				}

@@ -9,37 +9,39 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface FieldReader {
 
-	public enum ListLocation {
+	public enum DataLocation {
 		/**
-		 * Indica que a lista esta contida no posicional. Neste caso, o tamanho
-		 * da lista deve ser conhecido
+		 * Indica que os dados estão contidos no posicional. No caso de uma
+		 * lista, seu tamanho deve ser conhecido
 		 * <p>
 		 * e o parâmetro <b>listSize</b> deve ser informado.
 		 */
 		INNER,
 
 		/**
-		 * Indica que a lista será obtida através do Map. Neste caso, o tamanho
-		 * da lista não é conhecido.
-		 * <p>
-		 * e o parâmetro <b>listKey</b> deve ser informado.
+		 * Indica que os dados devem ser obtidos a partir do Map e o parâmetro
+		 * <b>dataKey</b> deve ser informado.. No caso de uma lista, o tamanho
+		 * não é conhecido.
 		 */
-		OUTER;
+		OUTER,
+		
+		/**
+		 * Valor default indicando que os dados não foram fornecidos.
+		 */
+		NONE;
 	}
 
 	int length() default 0;
 
 	int precision() default 0;
 
-	boolean calculate() default false;
-
 	String datePattern() default "dd/MM/yyyy HH:mm:ss";
 
-	ListLocation listLocation() default ListLocation.OUTER;
+	DataLocation dataLocation() default DataLocation.NONE;
 
 	Class<?> listType() default Object.class;
 
 	int listSize() default 0;
-	
-	String listKey() default "";
+
+	String dataKey() default "";
 }
