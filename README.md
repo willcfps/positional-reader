@@ -22,8 +22,11 @@ Todos os atributos que representem um dado no posicional deverá receber a anota
 <p>Date: parâmetros: length e datePattern</p>
 <p>Boolean: parâmetro: length</p>
 <p>List: Para o tipo lista temos dois cenários... a lista está contida no mesmo posicional ou em uma outra linha do posicional.</p>
-<p><b> - Lista contida: a lista está contida no posicional.</b> Parâmetros: dataLocation = FieldReader.DataLocation.INNER, listType = SuaClasse.class, listSize = Tamanho da lista</p>
-<p><b> - Lista: a lista não está contida no posicional.</b> Parâmetros: dataLocation = FieldReader.DataLocation.OUTER, listType = SuaClasse.class, dataKey = chave para obter a lista de posicional</p>
+<p><b> - Lista INNER: a lista está contida no posicional.</b> Parâmetros: dataLocation = FieldReader.DataLocation.INNER, listType = SuaClasse.class, listSize = Tamanho da lista</p>
+<p><b> - Lista OUTER: a lista não está contida no posicional.</b> Parâmetros: dataLocation = FieldReader.DataLocation.OUTER, listType = SuaClasse.class, dataKey = chave para obter a lista de posicional</p>
+<p>Classes do projeto: Temos dois cenários novamente... O posicional está contido no mesmo posicional ou em uma outra linha do posicional</p>
+<p><b> - Classe INNER: está contida no mesmo posicional.</b> Parâmetros: dataLocation = FieldReader.DataLocation.INNER</p>
+<p><b> - Classe OUTER: não está contida no mesmo posicional.</b> Parâmetros: dataLocation = FieldReader.DataLocation.OUTER, dataKey = chave para obter o posicional</p>
 
 ### EXEMPLO
 O posicional: 
