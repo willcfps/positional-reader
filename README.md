@@ -102,6 +102,7 @@ public class Pessoa {
 		}
 		return tels;
 	}
+}
 ```
 A classe Java que utiliza o <b>posicional-reader</b>:
 
