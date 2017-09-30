@@ -50,7 +50,7 @@ public class Pessoa {
 	@FieldReader(length = 20)
 	private String observacao;
 
-public String getObservacao() {
+        public String getObservacao() {
 		return observacao;
 	}
 
@@ -80,6 +80,24 @@ public String getObservacao() {
 
 	public void setNome(String teste) {
 		this.nome = teste;
+	}
+	
+	public static String getMockPessoa() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("JOÃO NASCIMENTO DIAS          ");
+		sb.append("14041956");
+		sb.append("MARIA NASCIMENTO DIAS         ");
+		sb.append("12071955");
+		sb.append("TESTE DO POSITIONAL ");
+		return sb.toString();
+	}
+
+	public static List<String> getMockTelefone(int qtd) {
+		List<String> tels = new ArrayList<>();
+		for (int i = 0; i < qtd; i++) {
+			tels.add("01122228888");
+		}
+		return tels;
 	}
 ```
 A classe Java que utiliza o <b>posicional-reader</b>:
