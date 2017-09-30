@@ -34,6 +34,73 @@ O posicional:
 
 A classe Java que representa o posicional acima:
 ```java
+
+import br.com.wcf.annotation.FieldReader;
+
+public class Telefone {
+	
+	@FieldReader(length = 3)
+	private Integer ddd;
+	
+	@FieldReader(length = 8)
+	private String telefone;
+
+	public String getTelefone() {
+		return telefone;
+	}
+
+	public void setTelefone(String telefone) {
+		this.telefone = telefone;
+	}
+
+	public Integer getDdd() {
+		return ddd;
+	}
+
+	public void setDdd(Integer teste) {
+		this.ddd = teste;
+	}
+}
+
+import br.com.wcf.annotation.FieldReader;
+
+public class Conjuge {
+
+	@FieldReader(length = 30)
+	private String nome;
+
+	@FieldReader(length = 8, datePattern = "ddMMyyyy")
+	private Date nascimento;
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Nome: ");
+		sb.append(this.nome);
+		sb.append(", \n");
+		sb.append("Data de nascimento: ");
+		sb.append(this.nascimento);
+		
+		return sb.toString();
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public Date getNascimento() {
+		return nascimento;
+	}
+
+	public void setNascimento(Date nascimento) {
+		this.nascimento = nascimento;
+	}
+}
+
 import br.com.wcf.annotation.FieldReader;
 
 public class Pessoa {
@@ -101,6 +168,32 @@ public class Pessoa {
 			tels.add("01122228888");
 		}
 		return tels;
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Nome: ");
+		sb.append(this.nome);
+		sb.append(", \n");
+		sb.append("Data de nascimento: ");
+		sb.append(this.nascimento);
+		sb.append(", \n");
+		sb.append("Telefones: ");
+		this.telefones.forEach(t -> {
+			sb.append("(");
+			sb.append(t.getDdd());
+			sb.append(") ");
+			sb.append(t.getTelefone());
+			sb.append(", ");
+		});
+		sb.append("\nConjuge: ");
+		sb.append(this.conjuge.toString());
+		sb.append(", \n");
+		sb.append("Observação: ");
+		sb.append(this.observacao);
+		
+		return sb.toString();
 	}
 }
 ```
