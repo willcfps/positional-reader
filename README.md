@@ -25,4 +25,85 @@ Todos os atributos que representem um dado no posicional deverá receber a anota
 <p><b> - Lista contida: a lista está contida no posicional.</b> Parâmetros: dataLocation = FieldReader.DataLocation.INNER, listType = SuaClasse.class, listSize = Tamanho da lista</p>
 <p><b> - Lista: a lista não está contida no posicional.</b> Parâmetros: dataLocation = FieldReader.DataLocation.OUTER, listType = SuaClasse.class, dataKey = chave para obter a lista de posicional</p>
 
+### EXEMPLO
+O posicional: 
+<p>JOÃO NASCIMENTO DIAS          14041956MARIA NASCIMENTO DIAS         12071955TESTE DO POSITIONAL </p>
 
+A classe Java que representa o posicional acima:
+```java
+import br.com.wcf.annotation.FieldReader;
+
+public class Pessoa {
+
+	@FieldReader(length = 30)
+	private String nome;
+
+	@FieldReader(length = 8, datePattern = "ddMMyyyy")
+	private Date nascimento;
+
+	@FieldReader(dataLocation = FieldReader.DataLocation.OUTER, listType = Telefone.class, dataKey = "TELEFONES")
+	private List<Telefone> telefones;
+
+	@FieldReader(dataLocation = FieldReader.DataLocation.INNER, dataKey = "CONJUGE")
+	private Conjuge conjuge;
+
+	@FieldReader(length = 20)
+	private String observacao;
+
+public String getObservacao() {
+		return observacao;
+	}
+
+	public void setObservacao(String observacao) {
+		this.observacao = observacao;
+	}
+
+	public List<Telefone> getTelefones() {
+		return telefones;
+	}
+
+	public void setTelefones(List<Telefone> telefones) {
+		this.telefones = telefones;
+	}
+
+	public Date getNascimento() {
+		return nascimento;
+	}
+
+	public void setNascimento(Date teste2) {
+		this.nascimento = teste2;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String teste) {
+		this.nome = teste;
+	}
+```
+A classe Java que utiliza o <b>posicional-reader</b>:
+
+```java
+import br.com.wcf.reader.PositionalReader;
+
+public class Inicializar {
+
+	public static void main(String[] args) {
+
+		PositionalReader reader = new PositionalReader();
+		try {
+			Map<String, Object> map = new HashMap<>();
+			map.put("TELEFONES", Pessoa.getMockTelefone(3));
+
+			System.out.println(Pessoa.getMockPessoa());
+			Pessoa pessoa = reader.parse(Pessoa.class, Pessoa.getMockPessoa(), map);
+			
+			System.out.println(pessoa.toString());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+}
+```
